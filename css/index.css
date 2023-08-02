@@ -1,0 +1,6 @@
+#fondo_cabeza {
+    background-image: url(../img/logo_peque.JPG);
+    width:"500 em";
+    height:"600 em";
+    background-color: fuchsia;
+}
