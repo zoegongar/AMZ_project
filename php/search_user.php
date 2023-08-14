@@ -13,27 +13,22 @@
 	require 'query.php';
 ?>	
 <div>
-<p class="title">Borrar usuaria</p>
-<form action="delete_user.php" method="POST"> 
+<p class="title">Buscar usuaria</p>
+<form action="search_user.php" method="POST"> 
 Número usuaria <input type="number" name="id_user">  
 <br>
-<input type="submit" name="delete" value="delete">
+<input type="submit" name="search" value="search">
 <input type="reset" value="reset" name="borrar"><br><br>
-<h1>chorizo</h1>
+
 <?php
 
 //asigna a las variables $name $surname_1... el valor que recoge de  'name'.   
 	//$name = filter_input(INPUT_POST, 'name');
 	$id_user = filter_input(INPUT_POST, 'id_user');
+	$name = filter_input(INPUT_POST, 'name');
 	
 
-if (isset($_POST['delete']))  {
-
-	//Declaramos y asignamos variables.
-	$servername = "localhost";
-	$database = 'amz';
-	$username = "root";
-	$password = "rootroot";
+if (isset($_POST['search']))  {
 
 	//Comprueba los errores, números en campos alfabéticos, campos vacíos...	
 	if (empty($id_user)) 
@@ -41,22 +36,36 @@ if (isset($_POST['delete']))  {
 		empty_space($id_user);
 	} 
 		else {
-		echo("Datos correctos");
+		echo("Datos correctos. ");
 	}
 
 	//llama a la función que hace la conexión
 	$conn = getConnection();
 	
 	//llama a la función que borra la usuaria
-	$AMZ = delete_user($id_user);
+	$AMZ = search_user($id_user);
 
-	if (mysqli_query($conn, $AMZ)) {
-		//delete_user($name, $id_user);
-		echo("albondigas");
+	$result = mysqli_query($conn, $AMZ);
+
+	$data = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+	foreach ($data as $row) {
+		//echo implode($row);
+		
+        echo "ID: " . $row['id'] . "<br>";
+		echo " TypeUser: " . $row['id_type_user'] . "<br>";
+		echo " Name: " . $row['name'] . "<br>";
+		echo " Surname: " . $row['surname_1'] . " " . $row['surname_2'] . "<br>";
+		echo " DNI: " .  $row['dni'] . "<br>"; 
+		echo " Telephone: " . $row['telephone'] . "<br>";		
+    }
+
+
+	/*if (mysqli_query($conn, $AMZ)) {
+		//search_user($name, $id_user);
 	} else {
-		//echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
-		echo("La usuaria especificada no existe, ¿Asegurate de que has introducido el número correcto");
-	}
+		echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
+	}*/
 
 	mysqli_close($conn);	   
 }

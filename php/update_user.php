@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Nueva usuaria</title>
+    <title>Modificar usuaria</title>
 </head>
 <body>
 <?php 
@@ -14,7 +14,8 @@
 ?>	
 <div>
 <p class="title">Nueva usuaria</p>
-<form action="new_user.php" method="POST"> 
+<form action="update_user.php" method="POST"> 
+Número usuaria <input type="number" name="id_user">    
 Tipo de usuaria <input type="number" name="user_type" require>  	
 Nombre <input type="text" name="name" require>  
 Primer apellido <input type="text" name="surname_1" >
@@ -45,16 +46,17 @@ if (isset($_POST['submit']))  {
 	}
 
 	//asigna a las variables $name $surname_1... el valor que recoge de  'name'.   
-	$name = filter_input(INPUT_POST, 'name');
+	$id_user = filter_input(INPUT_POST, 'id_user');
+    $user_type = filter_input(INPUT_POST, 'user_type', FILTER_VALIDATE_INT);
+    $name = filter_input(INPUT_POST, 'name');
 	$surname_1 = filter_input(INPUT_POST, 'surname_1');	
 	$surname_2 = filter_input(INPUT_POST, 'surname_2');	
 	$dni = filter_input(INPUT_POST, 'dni');	
 	$telephone = filter_input(INPUT_POST, 'telephone', FILTER_VALIDATE_INT);
-	$user_type = filter_input(INPUT_POST, 'user_type', FILTER_VALIDATE_INT);
-
-	//Introduzco usuaria en la base de datos
-	$AMZ = add_user($user_type, $name, $surname_1, $surname_2, $dni, $telephone);
-
+	
+	//Cambio usuaria en la base de datos
+	$AMZ = update_user($id_user, $user_type, $name, $surname_1, $surname_2, $dni, $telephone);
+    echo $AMZ . "<br>";
     $conn = getConnection();
 
 	if (mysqli_query($conn, $AMZ)) {

@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Borrar permanencia</title>
+    <title>Nueva permanencia</title>
 </head>
 <body>
 <?php 
@@ -13,28 +13,34 @@
 	require 'query.php';
 ?>	
 <div>
-<p class="title">Borrar permanencia</p>
-<form action="delete_period.php" method="POST"> 
-Número de permanencia<input type="number" name="id_period" required>  
+<p class="title">Nueva permanencia</p>
+<form action="new_period.php" method="POST"> 
+Usuaria <input type="number" name="id_user">
+Dia comienzo <input type="date" name="start_day" required>  
+Hora comienzo <input type="time" name="start_time" >
+hora fin <input type="time" name="end_time" ><br>
 <br>
 <input type="submit" name="submit" value="submit">
 <input type="reset" value="reset" name="reset"><br><br>
 <h1>patata</h1>
 <?php
 
+
 if (isset($_POST['submit']))  {
 
-	//llama a la función que hace la conexión
+	// Llamámos a la función que crea la conexión
 	$conn = getConnection();
 	
-		//asigna a las variables $nombre $apellido_1... el valor que recoge de  'name'.   
-	$id_period = filter_input(INPUT_POST, 'id_period');
-	
-	//Introduzco usuaria en la base de datos
-	$AMZ = delete_period($id_period);
+	//asigna a las variables $nombre $apellido_1... el valor que recoge de  'name'.   
+	$start_day = filter_input(INPUT_POST, 'start_day');
+	$start_time = filter_input(INPUT_POST, 'start_time');	
+	$end_time = filter_input(INPUT_POST, 'end_time');	
+	$id_user =filter_input(INPUT_POST, 'id_user');	
+	//Introduzco nueva permanencia en la base de datos
+	$AMZ = add_period($start_day, $start_time, $end_time);
 
 	if (mysqli_query($conn, $AMZ)) {
-		erase_period($id_period);
+		create_period($start_day, $start_time, $end_time);
 	} else {
 		echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
 	}
@@ -46,7 +52,6 @@ if (isset($_POST['submit']))  {
 	{
 		campo_vacio();
 	} 
-	  
 }
 	
 	function campo_vacio() {
@@ -54,8 +59,8 @@ if (isset($_POST['submit']))  {
 			echo("Los campos obligatorios no puede estar vacios. <br>");
 	}
 	
-	function erase_period($id_period){
-		echo ("Has borrado la permanencia número $id_period");
+	function create_period($start_day, $start_time, $end_time){
+		echo("Se ha creado correctamente la permancia del día $start_day de $start_time a $end_time. ");
 	}
 ?>
 </form>

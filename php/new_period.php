@@ -36,11 +36,20 @@ if (isset($_POST['submit']))  {
 	$start_time = filter_input(INPUT_POST, 'start_time');	
 	$end_time = filter_input(INPUT_POST, 'end_time');	
 	$id_user =filter_input(INPUT_POST, 'id_user');	
+	$id_period =filter_input(INPUT_POST, 'id_period');	
 	//Introduzco nueva permanencia en la base de datos
-	$AMZ = add_period($start_day, $start_time, $end_time);
+	$AMZ = add_period($start_day, $start_time, $end_time, $id_user);
 
 	if (mysqli_query($conn, $AMZ)) {
-		create_period($start_day, $start_time, $end_time);
+		if ($conn->query($AMZ) === TRUE) {
+            $id_period = $conn->insert_id; // Get the auto-incremental ID
+            echo "New record inserted successfully. Inserted ID is: " . $id_period;
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+
+		create_period($start_day, $start_time, $end_time, $id_user);
+		create_period_user($id_period, $id_user);
 	} else {
 		echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
 	}
@@ -59,8 +68,8 @@ if (isset($_POST['submit']))  {
 			echo("Los campos obligatorios no puede estar vacios. <br>");
 	}
 	
-	function create_period($start_day, $start_time, $end_time){
-		echo("Se ha creado correctamente la permancia del día $start_day de $start_time a $end_time. ");
+	function create_period($start_day, $start_time, $end_time, $id_user){
+		echo("Se ha creado correctamente la permancia para la usuaria $id_user del día $start_day de $start_time a $end_time. ");
 	}
 ?>
 </form>

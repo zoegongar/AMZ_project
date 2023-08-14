@@ -27,4 +27,11 @@ function check_conection($conn){
         echo ("Estamos en conexión. <br>"); 
     }	
 }
+
+//Buscar usuaria
+/*function search_user($id_user, $name, ){
+    $AMZ = ("SELECT name FROM users WHERE id='$id_user");
+    $user_back = $conn->query($AMZ);
+    }
+*/
 ?>
