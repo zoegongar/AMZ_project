@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  <div id="fondo_cabeza" width="500 em" height="600 em">
+  <div id="fondo_cabeza" >
     
   </div>
 </body>
