@@ -1,8 +1,4 @@
 <?php
-//Declaramos y asignamos variables.
-
-
-
 // Creamos la conexión
 function getConnection() {
 
@@ -28,10 +24,4 @@ function check_conection($conn){
     }	
 }
 
-//Buscar usuaria
-/*function search_user($id_user, $name, ){
-    $AMZ = ("SELECT name FROM users WHERE id='$id_user");
-    $user_back = $conn->query($AMZ);
-    }
-*/
 ?>

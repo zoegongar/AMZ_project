@@ -8,10 +8,6 @@
     <title>borrar usuaria</title>
 </head>
 <body>
-<?php 
-	require 'conection.php'; 
-	require 'query.php';
-?>	
 <div>
 <p class="title">Buscar usuaria</p>
 <form action="search_user.php" method="POST"> 
@@ -21,6 +17,8 @@ Número usuaria <input type="number" name="id_user">
 <input type="reset" value="reset" name="borrar"><br><br>
 
 <?php
+require 'conection.php'; 
+require 'query.php';
 
 //asigna a las variables $name $surname_1... el valor que recoge de  'name'.   
 	//$name = filter_input(INPUT_POST, 'name');
@@ -43,7 +41,7 @@ if (isset($_POST['search']))  {
 	$conn = getConnection();
 	
 	//llama a la función que borra la usuaria
-	$AMZ = search_user($id_user);
+	$AMZ = query_search_user($id_user);
 
 	$result = mysqli_query($conn, $AMZ);
 
