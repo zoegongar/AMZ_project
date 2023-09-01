@@ -1,10 +1,14 @@
 <?php
-require 'conection.php'; 
-require 'query.php';
-require 'check_data.php';
-require 'cookie.php';
+require_once 'conection.php'; 
+require_once 'query.php';
+require_once 'check_data.php';
+require_once 'cookie.php';
+require_once 'validations.php';
+require_once 'data_base.php';
+include_once 'navigator_var.php';
 
-check_cookie();
+Cookies::check_cookie();
+
 if (isset($_POST['submit']))  {
 
 	//Comprueba los errores, números en campos alfabéticos, campos vacíos...	
@@ -19,76 +23,36 @@ if (isset($_POST['submit']))  {
 	$user_type = filter_input(INPUT_POST, 'user_type', FILTER_VALIDATE_INT);
 	$password = filter_input(INPUT_POST, 'pass');
 
-	// Crear un hash de la contraseña
-	$password_hash = password_hash($password, PASSWORD_BCRYPT);
-	$check_form_result = check_form($user_type, $name, $surname_1, $surname_2, $dni, $telephone, $password_hash);
-	
+	$check_form_result = Validations::check_form($user_type, $name, $surname_1, $surname_2, $dni, $telephone, $password);
+
 	if (strlen($check_form_result) === 0) {
 
-	//Introduzco usuaria en la base de datos
-		$AMZ = add_user($user_type, $name, $surname_1, $surname_2, $dni, $telephone, $password_hash);
+		// Crear un hash de la contraseña
+		$password_hash = password_hash($password, PASSWORD_BCRYPT);
 
-		$conn = getConnection();
+		$query_add_user = Queries::add_user($user_type, $name, $surname_1, $surname_2, $dni, $telephone, $password_hash);
 
-		if (mysqli_query($conn, $AMZ)) {
-			new_user($name);
+		//Introduzco usuaria en la base de datos
+		$conn = Connection::getConnection();
+		$stmt = $conn->prepare($query_add_user);
+		$stmt->bind_param("sssssss", $user_type, $name, $surname_1, $surname_2, $dni, $telephone, $password_hash);
+		
+		if ($stmt->execute()) {
+			echo ("Has creado a la socia $name correctamente");
 		} else {
-			echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
+			echo "Error:<br>" . mysqli_error($conn);
 		}
 
-		mysqli_close($conn);
+		$stmt->close();
+		$conn->close();
+
 	} else {
+
 		echo $check_form_result;
+
 	}
 }
 	
-	function new_user($name){
-		echo ("Has creado a la socia $name correctamente");
-	}
-
-	function check_form($user_type, $name, $surname_1, $surname_2, $dni, $telephone, $pass) {
-		$result = "";
-
-		echo "<h1>checking $dni</h1>";
-
-		if (empty($user_type)) {
-			$result = $result . "<li>error user_type</li>";
-		}
-
-		if (empty($name) || is_numeric($name)) {
-			$result = $result . "<li>error nombre</li>";
-		} 
-
-		if (empty($surname_1) || is_numeric($surname_1)) {
-			$result = $result . "<li>error surname</li>";
-		}
-
-		if (empty($surname_2) || is_numeric($surname_2)) {
-			$result = $result . "<li>error surname</li>";
-		}
-
-		if (empty($dni)) {
-			$result = $result . "<li>error dni</li>";
-		} else if (check_dni($dni) === false) {
-				$result = $result . "<li>error dni</li>";			
-		}
-
-		if (empty($telephone)) {
-			$result = $result . "<li>error telephone</li>";
-		}
-
-		if (empty($pass)) {
-			$result = $result . "<li>error user_type</li>";
-		}
-
-
-		if (strlen($result) > 0) {
-			$result = "<ul>$result</ul>";
-		}
-	
-		return $result;
-	}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,15 +64,6 @@ if (isset($_POST['submit']))  {
     <title>Nueva usuaria</title>
 </head>
 <body>
-<div>
-<p><a href="new_shift.php">new shift</a></p>
-<p><a href="update_shift.php">update shift</a></p>
-<p><a href="delete_shift.php">delete shift</a></p>
-<p><a href="new_user.php">new user</a></p>
-<p><a href="update_user.php">update user</a></p>
-<p><a href="delete_user.php">delete user</a></p>
-<p><a href="shtift_table.php">tabla de permanencias</a></p>
-</div>
 <div>
 <p class="title">Nueva usuaria</p>
 <form action="new_user.php" method="POST"> 

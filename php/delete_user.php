@@ -1,6 +1,7 @@
 <?php
-require 'conection.php'; 
-require 'query.php';
+require_once 'conection.php'; 
+require_once 'query.php';
+include_once 'navigator_var.php';
 
 //asigna a las variables $name $surname_1... el valor que recoge de  'name'.   
 	//$name = filter_input(INPUT_POST, 'name');
@@ -21,18 +22,18 @@ if (isset($_POST['delete']))  {
 		empty_space($id_user);
 	} 
 		else {
-		echo("Datos correctos");
+	
 	}
 
 	//llama a la función que hace la conexión
-	$conn = getConnection();
+	$conn = Connection::getConnection();
 	
 	//llama a la función que borra la usuaria
-	$AMZ = delete_user($id_user);
+	$AMZ = Queries::query_delete_user($id_user);
 
 	if (mysqli_query($conn, $AMZ)) {
 		//delete_user($name, $id_user);
-		echo("albondigas");
+		echo("Has eliminado correctamente a la usuaria .");
 	} else {
 		//echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
 		echo("La usuaria especificada no existe, ¿Asegurate de que has introducido el número correcto");
@@ -58,15 +59,6 @@ if (isset($_POST['delete']))  {
     <title>borrar usuaria</title>
 </head>
 <body>
-<div>
-<p><a href="new_shift.php">new shift</a></p>
-<p><a href="update_shift.php">update shift</a></p>
-<p><a href="delete_shift.php">delete shift</a></p>
-<p><a href="new_user.php">new user</a></p>
-<p><a href="update_user.php">update user</a></p>
-<p><a href="delete_user.php">delete user</a></p>
-<p><a href="shtift_table.php">tabla de permanencias</a></p>
-</div>	
 <div>
 <p class="title">Borrar usuaria</p>
 <form action="delete_user.php" method="POST"> 

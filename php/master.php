@@ -1,3 +1,4 @@
 <?php
+include_once 'navigator_var.php';
 echo "<h1>Master </h1>";
 ?>

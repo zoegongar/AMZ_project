@@ -1,36 +1,45 @@
 <?php
-require 'conection.php'; 
-require 'query.php';
-require 'cookie.php';
-//require 'new_user.php';
-//check_cookie();
+require_once 'conection.php'; 
+require_once 'query.php';
+require_once 'cookie.php';
 
 if (isset($_POST['submit']))  {
     
-    $conn = getConnection();
+    $conn = Connection::getConnection();
     
-    $id_user = filter_input(INPUT_POST, 'id_user', FILTER_VALIDATE_INT);
+    $dni = filter_input(INPUT_POST, 'dni');
     $password = filter_input(INPUT_POST, 'pass');
     
     // Crear un hash de la contraseña
-    $password_hash = check_pass($id_user);
-    $stmt = $conn->prepare($password_hash);
-    $stmt->bind_param("s", $id_user);
+    $query_password_hash = Queries::check_pass();
+    $stmt = $conn->prepare($query_password_hash);
+    $stmt->bind_param("s", $dni);
     $stmt->execute();
     $stmt->bind_result($stored_password);
     $stmt->fetch();
     $stmt->close();
+
+    $get_user_id = Queries::get_user_id();
+    $stmt = $conn->prepare($get_user_id);
+    $stmt->bind_param("s", $dni);
+    $stmt->execute();
+    $stmt->bind_result($id_user);
+    $stmt->fetch();
+    $stmt->close();
+
+    echo "<h1>...$dni</h1>";
 
     if (password_verify($password, $stored_password)) {
         echo 'La contraseña es válida! <br>';
     
         // Generar una ID de sesión aleatoria
         $session_id = uniqid();
-        $add_session = add_session($session_id, $id_user);
-        $result = id_type_user($id_user);
+        $add_session = Queries::add_session($session_id, $id_user);
+        $result = id_type_user($id_user, $conn);
+
+        echo "<h1>typeuser: $result</h1>";
         
         if (mysqli_query($conn, $add_session)) {
-            read_cookie();
     		// Guardar la información de la sesión en una cookie
             setcookie('session_id', $session_id, time() + 3600, '/');
             echo"$result";
@@ -51,6 +60,7 @@ if (isset($_POST['submit']))  {
                     header("Location: inactive_member.php");
                     break;
             }
+            
         } else {
 			echo "Error: " . $add_session . "<br>" . mysqli_error($conn);
 		}
@@ -62,22 +72,22 @@ if (isset($_POST['submit']))  {
     }   
 }
 
-function id_type_user($id_user) {
-    $conn = getConnection();
-    $query = query_id_type_user($id_user, $conn);
-    echo "<h1>$query</h1>";
+function id_type_user($id_user, $conn) {
 
-    if ($query) {
-        $query_result = $conn->query($query);
+    $query = Queries::query_id_type_user();
 
-        $row = mysqli_fetch_assoc($query_result);
-        return $row['id_type_user'];
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $id_user); 
+    $stmt->execute();
+    $stmt->bind_result($id_type_user);
+    $stmt->fetch();
+    $stmt->close();
+
+    return $id_type_user;
 
     mysqli_free_result($result);
     mysqli_close($conn);
+
 }
 
 ?>
@@ -92,17 +102,9 @@ function id_type_user($id_user) {
 </head>
 <body>
 <div>
-<p><a href="new_shift.php">new shift</a></p>
-<p><a href="update_shift.php">update shift</a></p>
-<p><a href="delete_shift.php">delete shift</a></p>
-<p><a href="new_user.php">new user</a></p>
-<p><a href="update_user.php">update user</a></p>
-<p><a href="delete_user.php">delete user</a></p>
-</div>
-<div>
 <p class="title">acceso</p>
 <form action="login.php" method="POST"> 
-ID usuaria <input type="number" name="id_user" require>  	
+DNI <input type="text" name="dni" require>  	
 Contraseña<input type="password" name="pass"><br>
 <br>
 <input type="submit" name="submit" value="submit">

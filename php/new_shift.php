@@ -1,11 +1,12 @@
 <?php 
-	require 'conection.php'; 
-	require 'query.php';
+	require_once 'conection.php'; 
+	require_once 'query.php';
+	include_once 'navigator_var.php';
 
 if (isset($_POST['submit']))  {
 
 	// Llamámos a la función que crea la conexión
-	$conn = getConnection();
+	$conn = Connection::getConnection();
 	
 	//asigna a las variables $nombre $apellido_1... el valor que recoge de  'name'.   
 	$start_day = filter_input(INPUT_POST, 'start_day');
@@ -18,42 +19,34 @@ if (isset($_POST['submit']))  {
 	$today = today();
 	$day_week = get_Week_day($start_day);
 	// Consulta SQL para verificar si hay un evento en el rango de tiempo dado
-	$check_shift = "SELECT COUNT(*) as shift_count FROM shift WHERE week_day = '$day_week' AND start_time <= '$start_time' AND end_time >= '$end_time'";
-	$result_check_shift = $conn->query($check_shift);
 	$time_duration = check_shift_duration($start_time, $end_time);
 	$check_form_result = check_form($start_day, $time_duration);	
 		
 	if($start_day > $today) {
 		if (strlen($check_form_result) === 0) {
-			$row = $result_check_shift->fetch_assoc();
-			$shift_count = $row['shift_count'];
-			echo "<h1>$shift_count</h1>";
-			if ($shift_count == 0) {
-				echo("entró en el contador.");
 
-				if ($shift_count > 0) {
-					echo "Ya hay permanencia en esas horas.";
-				} else {
-					echo "No hay permanencias y se va a crear la tuya.";
-					//Introduzco nueva permanencia en la base de datos
-					$id_new_shift = create_shift($conn, $start_day, $day_week, $start_time, $end_time, $id_user);
-					// Insertar el último ID en otra tabla
-					//$new_shift_user = query_add_shift_user($conn, $id_new_shift, $id_user);
-
-					$AMZ = "INSERT INTO shift_user(id_user, id_shift) values ($id_user, $id_new_shift)";
-
-					if (mysqli_query($conn, $AMZ)) {
-						echo "<p>ok</p>";
-					} else {
-						echo "<p>nok</p>";
-					}
-				}
+			$shift_count = checkShift($conn, $day_week, $start_time, $end_time, $start_day);
+			
+			if ($shift_count > 0) {
+				echo "Ya hay permanencia en esas horas.";
 			} else {
-				echo "<p>$check_form_result</p>";
-				echo "Error en la consult: " . $conn->error;
-			}
+				echo "No hay permanencias y se va a crear la tuya.";
+				//Introduzco nueva permanencia en la base de datos
+				$id_new_shift = create_shift($conn, $start_day, $day_week, $start_time, $end_time);
+				if ($id_new_shift > -1) {
+					$result = $associate_shift($conn, $id_user, $id_new_shift);
+				}
 
+				if ($result) {
+					echo "<h1>Permanencia creada con éxito.</h1>";
+				} else {
+					echo "<h1>No se ha podido crear la permanencia.</h1>";
+				}
+
+			}
+			
 			mysqli_close($conn);
+			
 		} else {
 			echo "$check_form_result";
 		}
@@ -69,25 +62,38 @@ function get_Week_day($start_day) {
 function today() {
 	return date('Y-m-d');
 }
-
-echo "<h1>dia $day_week</h1>";
 	
 function new_shift_user($conn, $id_new_shift, $id_user){
 	echo "<h1>create shift</h1>";
 	$AMZ = query_add_shift_user($conn, $id_new_shift, $id_user);		
 } 
 
-function create_shift($connection, $start_day, $day_week, $start_time, $end_time, $id_user) {
-	echo "<h1>create</h1>";
-	$AMZ = query_add_shift($start_day, $day_week, $start_time, $end_time, $id_user);
-	echo "<p>$AMZ</p>";
-	if ($connection->query($AMZ) === TRUE) {
-		$id_shift = $connection->insert_id; // Get the auto-incremental ID
-		return $id_shift;
+function create_shift($connection, $start_day, $day_week, $start_time, $end_time) {
+
+	$sql = Queries::query_add_shift();
+	$stmt = $connection->prepare($sql);
+	$stmt->bind_param("siss", $start_day, $day_week, $start_time, $end_time);
+	
+	if ($stmt->execute()) {
+		return $connection->insert_id; // Get the auto-incremental ID
 	} else {
-		echo "Error: " . $sql . "<br>" . $conn->error;
 		return -1;
 	}
+
+}
+
+function associate_shift($connection, $id_user, $id_new_shift) {
+
+	$add_new_shift_user = Queries::query_add_shift_user();
+	$stmt = $conn->prepare($add_new_shift_user);
+	$stmt->bind_param("ii", $id_user, $id_new_shift);
+	
+	if ($stmt->execute()) {
+		return true;
+	} else {
+		return false;
+	}
+	
 }
 
 function get_users_in_shift($connection, $user_in_shift, $start_day, $start_time, $end_time) {
@@ -129,6 +135,23 @@ function check_shift_duration($start_time, $end_time) {
 	return $time_duration;
 }
 
+function checkShift($conn, $day_week, $start_time, $end_time, $start_day) {
+    $check_shift = "SELECT COUNT(*) as shift_count FROM shift WHERE week_day = ? AND start_time <= ? AND end_time >= ? AND (start_day <= ? AND (end_day IS NULL or end_day >= ?))";
+    
+    $stmt = $conn->prepare($check_shift);
+    $stmt->bind_param("sssss", $day_week, $start_time, $end_time, $start_day, $start_day);
+    $stmt->execute();
+    
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    
+    $shift_count = $row['shift_count'];
+    
+    $stmt->close();
+    
+    return $shift_count;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -140,15 +163,6 @@ function check_shift_duration($start_time, $end_time) {
     <title>Nueva permanencia</title>
 </head>
 <body>
-<div>
-<p><a href="new_shift.php">new shift</a></p>
-<p><a href="update_shift.php">update shift</a></p>
-<p><a href="delete_shift.php">delete shift</a></p>
-<p><a href="new_user.php">new user</a></p>
-<p><a href="update_user.php">update user</a></p>
-<p><a href="delete_user.php">delete user</a></p>
-<p><a href="shtift_table.php">tabla de permanencias</a></p>
-</div>
 <div>
 <p class="title">Nueva permanencia</p>
 <form action="new_shift.php" method="POST"> 

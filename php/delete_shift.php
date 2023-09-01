@@ -1,6 +1,7 @@
 <?php
-require 'conection.php'; 
-require 'query.php';
+require_once 'conection.php'; 
+require_once 'query.php';
+include_once 'navigator_var.php';
 
 if (isset($_POST['submit']))  {
 

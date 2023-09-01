@@ -1,27 +1,30 @@
 <?php
-// Creamos la conexión
-function getConnection() {
 
-    $servername = "localhost";
-    $database = 'amz';
-    $username = "root";
-    $password = "rootroot";
+require_once 'query.php';
 
-	$conn = mysqli_connect($servername, $username, $password, $database); 
+class Connection {
 
-    check_conection($conn);
+    public static function getConnection() {
 
-    return $conn;
-}
-    
-// Compruebo la conexión a la bbdd
-function check_conection($conn){
-    if (!$conn) {
-        echo("error");
-        echo("Algo ha ido mal: " . mysqli_connect_error());
-    } else {
-        echo ("Estamos en conexión. <br>"); 
-    }	
+        $servername = "localhost";
+        $database = 'amz';
+        $username = "root";
+        $password = "rootroot";
+
+        $conn = mysqli_connect($servername, $username, $password, $database); 
+
+        Connection::checkConection($conn);
+
+        return $conn;
+    }
+        
+    // Compruebo la conexión a la bbdd
+    private static function checkConection($conn){
+        if (!$conn) {
+            error_log("Error connecting with database: " . mysqli_connect_error());
+        } 	
+    }
+
 }
 
 ?>

@@ -1,40 +1,27 @@
 <?php
-require 'conection.php'; 
-require 'query.php';
-require 'cookie.php';
+require_once 'conection.php'; 
+require_once 'query.php';
+require_once 'cookie.php';
+include_once 'navigator_var.php';
+
 
 if (isset($_POST['submit']))  {
 
-	
-
-	//Comprueba los errores, números en campos alfabéticos, campos vacíos...	
-	if (empty($name) or empty($surname_1) or empty($dni) or empty($telephone) or empty($user_type)) 
-	{
-		empty($name);
-	} 
-		elseif (is_numeric($name) or  is_numeric($surname_1) or is_numeric($surname_2)) {
-		wrong_dates($name);
-	}
-		else {
-		$name = new_user($name);
-	}
-
 	//asigna a las variables $name $surname_1... el valor que recoge de  'name'.   
-	$id_user = filter_input(INPUT_POST, 'id_user');
+	$dni = filter_input(INPUT_POST, 'dni');	
     $user_type = filter_input(INPUT_POST, 'user_type', FILTER_VALIDATE_INT);
     $name = filter_input(INPUT_POST, 'name');
 	$surname_1 = filter_input(INPUT_POST, 'surname_1');	
 	$surname_2 = filter_input(INPUT_POST, 'surname_2');	
-	$dni = filter_input(INPUT_POST, 'dni');	
 	$telephone = filter_input(INPUT_POST, 'telephone', FILTER_VALIDATE_INT);
 	
 	//Cambio usuaria en la base de datos
-	$AMZ = query_update_user($id_user, $user_type, $name, $surname_1, $surname_2, $dni, $telephone);
-    echo $AMZ . "<br>";
-    $conn = getConnection();
+	$AMZ = Queries::query_update_user($user_type, $name, $surname_1, $surname_2, $dni, $telephone);
+    
+    $conn = Connection::getConnection();
 
 	if (mysqli_query($conn, $AMZ)) {
-		new_user($name);
+
 	} else {
 		echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
 	}
@@ -50,7 +37,7 @@ if (isset($_POST['submit']))  {
 		wrong_dates($name);
 	}
 		else {
-		$name = new_user($name, $telephone);
+		$name = update_user($name, $telephone);
 	}   
 }
 	
@@ -68,8 +55,8 @@ if (isset($_POST['submit']))  {
 		}	
 	
 	
-	function new_user($name){
-		echo ("Has creado a la socia $name correctamente");
+	function update_user($name){
+		echo ("Has modificado a la socia $name correctamente");
 	}
 ?>
 
@@ -84,23 +71,20 @@ if (isset($_POST['submit']))  {
 </head>
 <body>
 <div>
-<p><a href="new_shift.php">new shift</a></p>
-<p><a href="update_shift.php">update shift</a></p>
-<p><a href="delete_shift.php">delete shift</a></p>
-<p><a href="new_user.php">new user</a></p>
-<p><a href="update_user.php">update user</a></p>
-<p><a href="delete_user.php">delete user</a></p>
-<p><a href="shift_table.php">tabla de permanencias</a></p>
-</div>
-<div>
-<p class="title">Nueva usuaria</p>
+<p class="title">Modificar usuaria</p>
 <form action="update_user.php" method="POST"> 
-Número usuaria <input type="number" name="id_user">    
-Tipo de usuaria <input type="number" name="user_type" require>  	
+Numero de DNI <input type="text" name="dni">
+Tipo de usuaria <input list="user_type" name="user_type">
+  <datalist id="user_type">
+    <option value="1">Master
+    <option value="2">Activo
+    <option value="3">Itinerante
+	<option value="4">Junior/Juvenil
+	<option value="5">Afiliado
+  </datalist><br>		
 Nombre <input type="text" name="name" require>  
 Primer apellido <input type="text" name="surname_1" >
 Segundo apellido <input type="text" name="surname_2" ><br>
-Numero de DNI <input type="text" name="dni">
 Teléfono<input type="tel" name="telephone" pattern="[0-9]+" ><br>
 <br>
 <input type="submit" name="submit" value="submit">
