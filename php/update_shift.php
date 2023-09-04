@@ -28,9 +28,9 @@ if (isset($_POST['submit']))  {
 		if (strlen($check_form_result) === 0) {
 
 			$check_shift_result = checkShift($conn, $day_week, $start_time, $end_time, $start_day, $id_shift, $end_day);
-			echo "<h1>$check_shift_result</h1>";
+			//echo "<h1>$check_shift_result</h1>";
 			if ( $check_shift_result === 0) {
-				echo("entró en el contador.");
+				//echo("entró en el contador.");
 
 				
 					//Introduzco nueva permanencia en la base de datos
@@ -68,13 +68,13 @@ function today() {
 } */
 
 function update_shift($connection, $id_shift, $start_day, $day_week, $start_time, $end_time, $end_day) {
-	echo "<h1>update</h1>";
-	echo "<h1>$end_day</h1>";
+	//echo "<h1>update</h1>";
+	//echo "<h1>$end_day</h1>";
 
 	$sql = Queries::query_update_shift();
 	$stmt = $connection->prepare($sql);
 
-	echo "$start_day, $day_week, $start_time, $end_time, $end_day, $id_shift, $end_day";
+	echo "$start_day, $end_day, $day_week, $start_time, $end_time,  $id_shift";
 
 	//return "UPDATE  shift SET start_day = ?, week_day = ?, start_time = ?, end_time = ?, end_day = ? WHERE id_shift = ?";
 
@@ -116,7 +116,7 @@ function check_form($start_day, $time_duration) {
 }
 
 function checkShift($conn, $day_week, $start_time, $end_time, $start_day, $id_shift, $end_day) {
-    $check_shift = "SELECT COUNT(*) as shift_count FROM shift WHERE week_day = ? AND start_time <= ? AND end_time >= ? AND (start_day <= ? AND (end_day IS NULL or end_day >= ?)) AND id_shift != ?";
+    $check_shift = "SELECT COUNT(*) as shift_count FROM shift WHERE week_day = ? AND start_time <= ? AND end_time >= ? AND (start_day <= ? AND (end_day IS NULL or end_day >= ?)) AND id != ?";
     
     $stmt = $conn->prepare($check_shift);
     $stmt->bind_param("sssssi", $day_week, $start_time, $end_time, $end_day, $start_day, $id_shift);

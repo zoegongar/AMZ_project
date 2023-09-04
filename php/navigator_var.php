@@ -88,7 +88,7 @@ body {
     <div class="sub_nav-content">
       <a href="new_shift.php">Crear permanencia</a>
       <a href="update_shift.php">Modificar permanencia</a>      
-      <a href="search_user.php">Visualizar permanencias</a>
+      <a >Visualizar permanencias</a>
       <a href="delete_user.php">Borrar permanencia</a>
     </div>
   </div> 

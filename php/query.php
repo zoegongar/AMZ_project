@@ -39,27 +39,9 @@ class Queries {
 
     //Modificar permanencia
     public static function query_update_shift(){
-        return "UPDATE  shift SET start_day = ?, week_day = ?, start_time = ?, end_time = ?, end_day = ? WHERE id_shift = ?";
+        return "UPDATE  shift SET start_day = ?, week_day = ?, start_time = ?, end_time = ?, end_day = ? WHERE id = ?";
     }
 
-    //Añadir usuaria a una permanencia
-    public static function query_add_user_shift($id_shift, $id_user){
-        return "INSERT INTO shift_user (id_shift, id_user) VALUES ($id_shift, $id_user)";
-    }
-
-    //añade id_shift y id_user a la tabla shift_user
-    // public static function query_add_shift_user($conn, $id_new_shift, $id_user) { 
-    // $select_last_id = "SELECT max(id) as id_number FROM AMZ.shift";
-    // $result_last_id = $conn->query($select_last_id);                  
-    //     if ($result_last_id->num_rows > 0) {
-    //         $row = $result_last_id->fetch_assoc();
-    //         $id_new_shift = $row["id_number"];
-    //     } else {
-    //         $id_new_shift = 0; // Manejar el caso de que no haya registros
-    //     }
-    //     return "INSERT INTO shift_user (id_shift, id_user) VALUES ('$id_new_shift', '$id_user')";
-    // }
-    
     //Borra permanencia
     public static function query_delete_shift($id_shift) {        
         return "DELETE FROM shift where id=$id_shift";

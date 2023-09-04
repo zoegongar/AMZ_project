@@ -34,7 +34,7 @@ if (isset($_POST['submit']))  {
 				//Introduzco nueva permanencia en la base de datos
 				$id_new_shift = create_shift($conn, $start_day, $day_week, $start_time, $end_time);
 				if ($id_new_shift > -1) {
-					$result = $associate_shift($conn, $id_user, $id_new_shift);
+					$result = associate_shift($conn, $id_user, $id_new_shift);
 				}
 
 				if ($result) {
@@ -85,7 +85,7 @@ function create_shift($connection, $start_day, $day_week, $start_time, $end_time
 function associate_shift($connection, $id_user, $id_new_shift) {
 
 	$add_new_shift_user = Queries::query_add_shift_user();
-	$stmt = $conn->prepare($add_new_shift_user);
+	$stmt = $connection->prepare($add_new_shift_user);
 	$stmt->bind_param("ii", $id_user, $id_new_shift);
 	
 	if ($stmt->execute()) {
@@ -109,8 +109,6 @@ function get_users_in_shift($connection, $user_in_shift, $start_day, $start_time
 
 function check_form($start_day, $time_duration) {
 	$result = "";
-		
-	echo "<h1>checking $start_day</h1>";
 				
 	if ($time_duration < 2) {
 		$result = $result . "<li>Entre la hora de inicio y la hora de fin no pasan más de dos horas. </li>";

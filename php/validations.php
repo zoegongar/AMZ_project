@@ -6,7 +6,6 @@ class Validations {
 
         $result = "";
 
-        echo "<h1>checking $dni</h1>";
 
         if (empty($user_type)) {
             $result = $result . "<li>error user_type</li>";
