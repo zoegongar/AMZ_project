@@ -18,7 +18,7 @@ if (isset($_POST['search']))  {
 		empty_space($dni);
 	} 
 		else {
-		echo("Datos correctos. ");
+		//echo("Datos correctos. ");
 	}
 
 	//llama a la función que hace la conexión
@@ -32,7 +32,7 @@ if (isset($_POST['search']))  {
 	$data = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 	foreach ($data as $row) {
-		//echo implode($row);
+		echo implode($row);
 		
         echo "DNI: " . $row['dni'] . "<br>";
 		echo " TypeUser: " . $row['id_type_user'] . "<br>";
@@ -43,11 +43,11 @@ if (isset($_POST['search']))  {
     }
 
 
-	/*if (mysqli_query($conn, $AMZ)) {
-		//search_user($name, $id_user);
+	if (mysqli_query($conn, $AMZ)) {
+		Queries::query_search_user($name, $dni);
 	} else {
 		echo "Error: " . $AMZ . "<br>" . mysqli_error($conn);
-	}*/
+	}
 
 	mysqli_close($conn);	   
 }

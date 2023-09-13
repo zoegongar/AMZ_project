@@ -2,6 +2,7 @@
 require_once 'conection.php'; 
 require_once 'query.php';
 include_once 'navigator_var.php';
+include_once '../html/form_update_shift.html';
 
 
 if (isset($_POST['submit']))  {
@@ -66,7 +67,7 @@ function today() {
 	echo "<h1>update shift</h1>";
 	$AMZ = query_add_shift_user($conn, $id_new_shift, $id_user);		
 } */
-
+//Actualiza las permanencias de forma parametrizada
 function update_shift($connection, $id_shift, $start_day, $day_week, $start_time, $end_time, $end_day) {
 	//echo "<h1>update</h1>";
 	//echo "<h1>$end_day</h1>";
@@ -74,9 +75,8 @@ function update_shift($connection, $id_shift, $start_day, $day_week, $start_time
 	$sql = Queries::query_update_shift();
 	$stmt = $connection->prepare($sql);
 
-	echo "$start_day, $end_day, $day_week, $start_time, $end_time,  $id_shift";
-
-	//return "UPDATE  shift SET start_day = ?, week_day = ?, start_time = ?, end_time = ?, end_day = ? WHERE id_shift = ?";
+	
+	return "UPDATE  shift SET start_day = ?, week_day = ?, start_time = ?, end_time = ?, end_day = ? WHERE id_shift = ?";
 
 	$stmt->bind_param("sissss", $start_day, $day_week, $start_time, $end_time, $end_day, $id_shift);
 	
@@ -89,6 +89,7 @@ function update_shift($connection, $id_shift, $start_day, $day_week, $start_time
 }
 
 function get_users_in_shift($connection, $user_in_shift, $start_day, $start_time, $end_time) {
+	
 	$user_in_shift = query_number_user_shift ($start_day, $start_time, $end_time);
 	$result = mysqli_query($connection, $user_in_shift);
 	$row = mysqli_fetch_assoc($result);
@@ -102,7 +103,6 @@ function get_users_in_shift($connection, $user_in_shift, $start_day, $start_time
 function check_form($start_day, $time_duration) {
 	$result = "";
 		
-	echo "<h1>checking $start_day</h1>";
 				
 	if ($time_duration < 2) {
 		$result = $result . "<li>Entre la hora de inicio y la hora de fin no pasan más de dos horas. </li>";
@@ -116,6 +116,8 @@ function check_form($start_day, $time_duration) {
 }
 
 function checkShift($conn, $day_week, $start_time, $end_time, $start_day, $id_shift, $end_day) {
+
+	
     $check_shift = "SELECT COUNT(*) as shift_count FROM shift WHERE week_day = ? AND start_time <= ? AND end_time >= ? AND (start_day <= ? AND (end_day IS NULL or end_day >= ?)) AND id != ?";
     
     $stmt = $conn->prepare($check_shift);
@@ -143,6 +145,7 @@ function check_shift_duration($start_time, $end_time) {
 
 	return $time_duration;
 }
+
 //Muestra la tabla de permanencias.
 function getShifts() {
 	$conn = Connection::getConnection();
@@ -177,34 +180,3 @@ function getShifts() {
 	return $table;
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Modificar permanencia</title>
-</head>
-<body>
-<!-- <h1>Permanencias</h1> 
-<div><?php // echo getShifts(); ?></div>-->
-
-<div>
-<p class="title">Modificar permanencia</p>
-<form action="update_shift.php" method="POST"> 
-Número de permanencia <input type="number" name="id_shift">
-Dia comienzo <input type="date" name="start_day" required>  
-Dia fin <input type="date" name="end_day">  
-
-Hora comienzo <input type="time" name="start_time" >
-hora fin <input type="time" name="end_time" ><br>
-<br>
-<input type="submit" name="submit" value="submit">
-<input type="reset" value="reset" name="reset"><br><br>
-<h1>patata</h1>
-</form>
-<p>
-</div>
-</body>

@@ -2,6 +2,7 @@
 	require_once 'conection.php'; 
 	require_once 'query.php';
 	include_once 'navigator_var.php';
+	include_once '../html/form_update_user.html';
 
 if (isset($_POST['submit']))  {
 
@@ -151,28 +152,3 @@ function checkShift($conn, $day_week, $start_time, $end_time, $start_day) {
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Nueva permanencia</title>
-</head>
-<body>
-<div>
-<p class="title">Nueva permanencia</p>
-<form action="new_shift.php" method="POST"> 
-Usuaria <input type="number" name="id_user">
-Dia comienzo <input type="date" name="start_day" required>  
-Hora comienzo <input type="time" name="start_time" >
-hora fin <input type="time" name="end_time" ><br>
-<br>
-<input type="submit" name="submit" value="submit">
-<input type="reset" value="reset" name="reset"><br><br>
-</form>
-<p>
-</div>
-</body>
-

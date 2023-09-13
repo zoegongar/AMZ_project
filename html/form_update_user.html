@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Modificar usuaria</title>
+</head>
+<body>
+<div>
+<p class="title">Modificar usuaria</p>
+<form action="update_user.php" method="POST"> 
+Numero de DNI <input type="text" name="dni">
+Tipo de usuaria <input list="user_type" name="user_type">
+  <datalist id="user_type">
+    <option value="1">Master
+    <option value="2">Activo
+    <option value="3">Itinerante
+	<option value="4">Junior/Juvenil
+	<option value="5">Afiliado
+  </datalist><br>		
+Nombre <input type="text" name="name" require>  
+Primer apellido <input type="text" name="surname_1" >
+Segundo apellido <input type="text" name="surname_2" ><br>
+Teléfono<input type="tel" name="telephone" pattern="[0-9]+" ><br>
+<br>
+<input type="submit" name="submit" value="submit">
+<input type="reset" value="reset" name="reset"><br><br>
+
+</form>
+<p>
+</div>
+</body>

@@ -8,7 +8,7 @@ class Validations {
 
 
         if (empty($user_type)) {
-            $result = $result . "<li>error user_type</li>";
+            $result = $result . "<li>error tipo de usuaria</li>";
         }
 
         if (empty($name) || is_numeric($name)) {
@@ -16,11 +16,11 @@ class Validations {
         } 
 
         if (empty($surname_1) || is_numeric($surname_1)) {
-            $result = $result . "<li>error surname</li>";
+            $result = $result . "<li>error apellido</li>";
         }
 
         if (empty($surname_2) || is_numeric($surname_2)) {
-            $result = $result . "<li>error surname</li>";
+            $result = $result . "<li>error apellido</li>";
         }
 
         if (empty($dni)) {
@@ -30,11 +30,11 @@ class Validations {
         }
 
         if (empty($telephone)) {
-            $result = $result . "<li>error telephone</li>";
+            $result = $result . "<li>error teléfono</li>";
         }
 
         if (empty($pass)) {
-            $result = $result . "<li>error user_type</li>";
+            $result = $result . "<li>error contraseña</li>";
         }
 
 

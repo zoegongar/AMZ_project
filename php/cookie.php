@@ -4,14 +4,14 @@
 
 class Cookies {
 
-    /*public static function read_cookie(){
+    public static function read_cookie(){
         if(isset($_COOKIE["session_id"])) {
             $valorCookie = $_COOKIE["session_id"];
             //echo "El valor de la cookie es: " . $valorCookie;
         } else {
             echo "La cookie no está seteada.";
         }
-    }*/
+    }
 
     //se conecte a la base de datos y comprube que la session si la sessión devuelve false manda 
     //al inicio de session.

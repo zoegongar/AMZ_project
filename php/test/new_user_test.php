@@ -8,7 +8,7 @@ require_once 'check_data.php';
 require_once 'cookie.php';
 require_once 'validations.php';
 require_once 'new_user.php';
-include_once 'navigator_var.php';
+include_once '/html/navigator_var.html';
 
 class UserTest extends TestCase {
     public function testValidUserData() {

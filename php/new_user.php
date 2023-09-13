@@ -6,6 +6,7 @@ require_once 'cookie.php';
 require_once 'validations.php';
 require_once 'data_base.php';
 include_once 'navigator_var.php';
+include_once '../html/form_new_user.html';
 
 Cookies::check_cookie();
 
@@ -54,31 +55,3 @@ if (isset($_POST['submit']))  {
 }
 	
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Nueva usuaria</title>
-</head>
-<body>
-<div>
-<p class="title">Nueva usuaria</p>
-<form action="new_user.php" method="POST"> 
-Tipo de usuaria <input type="number" name="user_type" require>  	
-Nombre <input type="text" name="name" require>  
-Primer apellido <input type="text" name="surname_1" >
-Segundo apellido <input type="text" name="surname_2" ><br>
-Numero de DNI <input type="text" name="dni">
-Teléfono<input type="tel" name="telephone" pattern="[0-9]+" ><br>
-Contraseña<input type="password" name="pass"><br>
-<br>
-<input type="submit" name="submit" value="submit">
-<input type="reset" value="reset" name="reset"><br><br>
-
-</form>
-<p>
-</div>
-</body>

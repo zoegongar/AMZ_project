@@ -1,7 +1,7 @@
 <?php
 require_once 'conection.php'; 
 require_once 'query.php';
-include_once 'navigator_var.php';
+include_once '/html/navigator_var.html';
 
 //asigna a las variables $name $surname_1... el valor que recoge de  'name'.   
 	//$name = filter_input(INPUT_POST, 'name');
@@ -49,25 +49,3 @@ if (isset($_POST['delete']))  {
 		} 
 	}
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>borrar usuaria</title>
-</head>
-<body>
-<div>
-<p class="title">Borrar usuaria</p>
-<form action="delete_user.php" method="POST"> 
-Número usuaria <input type="number" name="id_user">  
-<br>
-<input type="submit" name="delete" value="delete">
-<input type="reset" value="reset" name="borrar"><br><br>
-<h1>chorizo</h1>
-</form>
-<p>
-</div>
-</body>
